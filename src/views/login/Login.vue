@@ -53,11 +53,13 @@ export default {
         data: this.user
       }).then(res => {
         this.isLoading = false
-        // console.log(res.data.verifySuccess)
+        // console.log(res.data)
         if (res.data.verifySuccess) {
           this.$message.success('登陆成功')
+          window.localStorage.setItem('token', JSON.stringify(res.data.userInfo.token))
+          // console.log(res.data.userInfo.token)
           this.$router.push({
-            name: 'Home'
+            name: 'home'
           })
         } else this.$message.error('登陆失败')
       }).catch(err => {
