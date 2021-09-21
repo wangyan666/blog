@@ -8,11 +8,13 @@
             <el-dropdown v-if="isLogining">
             <div class="el-dropdown-link">
               <el-image
+                :key="Date.now()"
                 style="width: 50px; height: 50px; border-radius: 50%"
                 :src="userInfo.avator"
                 :fit="fit">
                 <div slot="error" style="height: 50px;width: 50px;text-align: center;line-height: 50px;font-size:30px;background-color:#dfe6e9" class="image-slot"><i class="el-icon-picture-outline"></i></div>
               </el-image>
+              <!-- <img :src="userInfo.avator" alt="" style="width: 50px; height: 50px; border-radius: 50%"> -->
               <i class="el-icon-arrow-down el-icon--right"></i>
             </div>
             <el-dropdown-menu slot="dropdown">
@@ -45,7 +47,7 @@ export default {
   methods: {
     // 登录
     OnLogin () {
-      this.$router.push({
+      this.$router.replace({
         name: 'login'
       })
     },
@@ -58,7 +60,9 @@ export default {
         type: 'warning'
       }).then(() => {
         window.localStorage.removeItem('token')
+        location.reload() // 刷新页面
         this.isLogining = false
+        // this.$route.push('/')
         this.$message({
           type: 'success',
           message: '已退出!'
@@ -71,26 +75,31 @@ export default {
       })
     }
   },
-
   created () {
-    // console.log('token是', this.$route.params.token)
-    // 验证登录页面用户信息携带的token，从而返回数据
-    request({
-      method: 'get',
-      url: '/userInfo',
-      headers: {
-        token: JSON.parse(window.localStorage.getItem('token'))
-      }
-    }).then(res => {
-      // console.log(res.data)
-      if (res.data.userInfo) {
-        this.userInfo = res.data.userInfo
-        this.isLogining = true
-      }
-    }).catch(err => {
-      console.log('未获取用户信息', err)
-    })
+    const token = window.localStorage.getItem('token')
+    if (token) {
+      this.isLogining = true
+      // 验证登录页面用户信息携带的token，从而返回数据
+      request({
+        method: 'get',
+        url: 'api/user/userInfo',
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }).then(res => {
+        // console.log(res.data)
+        this.userInfo = res.data.data
+        // console.log(this.userInfo)
+      }).catch(err => {
+        console.log('未获取用户信息', err)
+      })
+    }
   }
+  // beforeCreate () {
+  //   const token = window.localStorage.getItem('token')
+  //   if (token) {
+  //   }
+  // }
 }
 </script>
 

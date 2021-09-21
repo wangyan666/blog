@@ -1,8 +1,8 @@
 <template>
   <div class="login-container">
     <el-form ref="formRef" class="login-form" :model="user" :rules="rules">
-      <el-form-item class="item" prop="id">
-        <el-input class="input" v-model="user.id" placeholder="请输入账号"></el-input>
+      <el-form-item class="item" prop="username">
+        <el-input class="input" v-model="user.username" placeholder="请输入账号"></el-input>
       </el-form-item>
       <el-form-item class="item" prop="password">
         <el-input class="input" type="password" v-model="user.password" placeholder="请输入密码" ></el-input>
@@ -25,12 +25,12 @@ export default {
   data () {
     return {
       user: {
-        id: '',
+        username: '',
         password: ''
       },
       isLoading: false,
       rules: {
-        id: [
+        username: [
           { required: true, message: '请输入账号', trigger: 'blur' },
           { min: 3, max: 8, message: '长度在 3 到 8 个字符', trigger: 'blur' }
         ],
@@ -49,23 +49,21 @@ export default {
       // request为封装的axios
       request({
         method: 'post',
-        url: '/user',
+        url: '/api/user/login',
         data: this.user
       }).then(res => {
         this.isLoading = false
-        // console.log(res.data)
-        if (res.data.verifySuccess) {
+        if (res.data.data.token) {
           this.$message.success('登陆成功')
-          window.localStorage.setItem('token', JSON.stringify(res.data.userInfo.token))
-          // console.log(res.data.userInfo.token)
-          this.$router.push({
-            name: 'home'
+          window.localStorage.setItem('token', res.data.data.token)
+          this.$router.replace({
+            name: 'first'
           })
         } else this.$message.error('登陆失败')
       }).catch(err => {
-        console.log('登陆失败', err)
+        console.log('登陆失败了', err)
         this.isLoading = false
-        this.$message.error('登陆失败')
+        this.$message.error('登陆失败了')
       })
     },
 
