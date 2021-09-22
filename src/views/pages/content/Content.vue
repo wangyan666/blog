@@ -44,7 +44,7 @@
   <!-- 下部分 -->
   <el-card class="box-card">
     <div slot="header" class="clearfix">
-      <span>卡片名称</span>
+      <span>共有{{this.blogNumber}}条数据</span>
     </div>
     <!-- 表格 -->
     <el-table
@@ -63,6 +63,7 @@
         width="180">
       </el-table-column>
       <el-table-column
+        prop="state"
         label="状态"
         width="180">
         <template slot-scope="scope">
@@ -72,7 +73,7 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="time"
+        prop="createtime"
         label="发布时间"
         width="180">
       </el-table-column>
@@ -92,9 +93,10 @@
     </el-table>
     <!-- 分页 -->
     <el-pagination
-      :page-size="8"
+      :page-size= this.blogConfig.pagesize
       layout="prev, pager, next"
-      :total="1000">
+      :total= this.blogNumber
+      @current-change="onPageChange">
     </el-pagination>
   </el-card>
   <!-- 下部分end -->
@@ -102,6 +104,8 @@
 </template>
 
 <script>
+import request from '@/utils/request'
+
 export default {
   name: 'Content',
 
@@ -120,20 +124,45 @@ export default {
         { state: 2, text: '审核通过', type: 'success' },
         { state: 3, text: '审核失败', type: 'warning' },
         { state: 4, text: '已删除', type: 'danger' }
-      ]
+      ],
+      // 博客筛选的配置
+      blogConfig: {
+        page: 1,
+        pagesize: 6,
+        state: 1
+      },
+      blogNumber: 0
     }
   },
   methods: {
     onSubmit () {
       console.log('submit!')
+    },
+    onPageChange (page) {
+      this.blogConfig.page = page
+      this.initBlog()
+    },
+    // 加载表格数据
+    initBlog () {
+      request.get('api/blog/list', { params: this.blogConfig })
+        .then((response) => {
+          // console.log(response.data)
+          this.tableData = response.data.data
+        })
+    },
+    // 获取博客总数
+    getTotel () {
+      request.get('api/blog/blogNumber')
+        .then((val) => {
+          // console.log(val.data.data['COUNT(*)'])
+          this.blogNumber = val.data.data['COUNT(*)']
+        })
     }
   },
 
   created () {
-    this.axios.get('http://localhost:3000/api/blog/list')
-      .then((response) => {
-        this.tableData = response.data
-      })
+    this.initBlog()
+    this.getTotel()
   }
 
 }

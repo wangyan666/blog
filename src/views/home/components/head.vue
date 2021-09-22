@@ -91,7 +91,7 @@ export default {
         this.userInfo = res.data.data
         // console.log(this.userInfo)
       }).catch(err => {
-        console.log('未获取用户信息', err)
+        console.log('未获取用户信息', err.message)
       })
     }
   }

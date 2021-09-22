@@ -1,6 +1,7 @@
 // 封装基于axios的请求模块
-
 import axios from 'axios'
+
+import router from '../router/index.js'
 
 // 创建一个axios实例
 const request = axios.create({
@@ -14,6 +15,22 @@ request.interceptors.request.use(
     const token = window.localStorage.token
     if (token) config.headers.Authorization = `Bearer ${token}`
     return config
+  }
+)
+
+// 相应拦截器，返回401时，重新登录
+request.interceptors.response.use(
+  response => { return response },
+  error => {
+    if (error.response) {
+      switch (error.response.status) {
+        case 401:
+          // 跳转登录
+          alert('用户授权过期，请重新登录')
+          router.replace('/login')
+          break
+      }
+    }
   }
 )
 
