@@ -13,12 +13,12 @@
     <el-form ref="form" :model="form" label-width="80px">
       <el-form-item label="状态 :">
         <el-radio-group v-model="form.state">
-          <el-radio label="全部"></el-radio>
-          <el-radio label="草稿"></el-radio>
-          <el-radio label="待审核"></el-radio>
-          <el-radio label="审核通过"></el-radio>
-          <el-radio label="审核失败"></el-radio>
-          <el-radio label="已删除"></el-radio>
+          <el-radio label="">全部</el-radio>
+          <el-radio label="0">草稿</el-radio>
+          <el-radio label="1">待审核</el-radio>
+          <el-radio label="2">审核通过</el-radio>
+          <el-radio label="3">审核失败</el-radio>
+          <el-radio label="4">已删除</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="频道 :">
@@ -29,15 +29,15 @@
       </el-form-item>
       <el-form-item label="活动时间 :">
         <el-col :span="7">
-          <el-date-picker type="date" placeholder="开始日期" v-model="form.date1" style="width: 100%;"></el-date-picker>
+          <el-date-picker type="date" placeholder="开始日期" v-model="form.date1" value-format="timestamp" style="width: 100%;"></el-date-picker>
         </el-col>
         <el-col class="line" :span="1">&nbsp;</el-col>
         <el-col :span="7">
-          <el-date-picker type="date" placeholder="结束日期" v-model="form.date2" style="width: 100%;"></el-date-picker>
+          <el-date-picker type="date" placeholder="结束日期" v-model="form.date2" value-format="timestamp" style="width: 100%;"></el-date-picker>
         </el-col>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="onSubmit">查询</el-button>
+        <el-button type="primary" @click="onSubmit" :disabled="loading">查询</el-button>
       </el-form-item>
     </el-form>
   </el-card>
@@ -48,6 +48,7 @@
     </div>
     <!-- 表格 -->
     <el-table
+    v-loading="loading"
       class="table"
       :data="tableData"
       style="width: 100%"
@@ -93,6 +94,7 @@
     </el-table>
     <!-- 分页 -->
     <el-pagination
+      :disabled="loading"
       :page-size= this.blogConfig.pagesize
       layout="prev, pager, next"
       :total= this.blogNumber
@@ -111,6 +113,7 @@ export default {
 
   data () {
     return {
+      loading: true, // loading动画
       tableData: [],
       form: {
         channel: '',
@@ -129,7 +132,9 @@ export default {
       blogConfig: {
         page: 1,
         pagesize: 6,
-        state: 1
+        state: null,
+        date1: null,
+        date2: null
       },
       blogNumber: 0
     }
@@ -137,22 +142,29 @@ export default {
   methods: {
     onSubmit () {
       console.log('submit!')
+      this.blogConfig.state = this.form.state
+      this.blogConfig.date1 = this.form.date1
+      this.blogConfig.date2 = this.form.date2
+      this.initBlog(this.blogConfig)
+      this.getTotel(this.blogConfig)
     },
     onPageChange (page) {
       this.blogConfig.page = page
-      this.initBlog()
+      this.initBlog(this.blogConfig)
     },
     // 加载表格数据
-    initBlog () {
-      request.get('api/blog/list', { params: this.blogConfig })
+    initBlog (config) {
+      this.loading = true
+      request.get('api/blog/list', { params: config })
         .then((response) => {
           // console.log(response.data)
           this.tableData = response.data.data
+          this.loading = false
         })
     },
     // 获取博客总数
-    getTotel () {
-      request.get('api/blog/blogNumber')
+    getTotel (config) {
+      request.get('api/blog/blogNumber', { params: config })
         .then((val) => {
           // console.log(val.data.data['COUNT(*)'])
           this.blogNumber = val.data.data['COUNT(*)']
@@ -161,7 +173,7 @@ export default {
   },
 
   created () {
-    this.initBlog()
+    this.initBlog(this.blogConfig)
     this.getTotel()
   }
 

@@ -11,7 +11,6 @@ import Publish from '@/views/pages/publish/Publish.vue'
 import Comments from '@/views/pages/comments/Comments.vue'
 import Fans from '@/views/pages/fans/Fans.vue'
 import Setting from '@/views/pages/seting/Setting.vue'
-import Unauthorized from '@/views/pages/unauthorized/Unauthorized.vue'
 
 Vue.use(VueRouter)
 
@@ -30,11 +29,6 @@ const routes = [
         path: '',
         name: 'first',
         component: First
-      },
-      {
-        path: '/unauthorized',
-        name: 'unauthorized',
-        component: Unauthorized
       },
       {
         path: '/content',

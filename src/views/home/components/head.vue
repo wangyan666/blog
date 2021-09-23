@@ -18,10 +18,9 @@
               <i class="el-icon-arrow-down el-icon--right"></i>
             </div>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>黄金糕</el-dropdown-item>
-              <el-dropdown-item>狮子头</el-dropdown-item>
-              <el-dropdown-item>个人中心</el-dropdown-item>
-              <el-dropdown-item disabled>双皮奶</el-dropdown-item>
+              <el-dropdown-item @click.native="goPage('http://www.baidu.com')">百度一下</el-dropdown-item>
+              <el-dropdown-item @click.native="goPage('https://www.google.com/ncr')">Google</el-dropdown-item>
+              <el-dropdown-item @click.native="goPage('https://github.com/wangyan666')">个人中心</el-dropdown-item>
               <el-dropdown-item divided @click.native="onOutLogin">退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -50,6 +49,10 @@ export default {
       this.$router.replace({
         name: 'login'
       })
+    },
+    // 去外部链接
+    goPage (url) {
+      window.location.href = url
     },
 
     // 退出登录
