@@ -11,7 +11,7 @@
     </div>
     <!-- 筛选 -->
     <el-form ref="form" :model="form" label-width="80px">
-      <el-form-item label="状态 :">
+      <el-form-item label="状态 :ㅤ">
         <el-radio-group v-model="form.state">
           <el-radio label="">全部</el-radio>
           <el-radio label="0">草稿</el-radio>
@@ -21,13 +21,13 @@
           <el-radio label="4">已删除</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="频道 :">
+      <el-form-item label="频道 :ㅤ">
         <el-select v-model="form.channel" placeholder="请选择频道">
           <el-option label="区域一" value="shanghai"></el-option>
           <el-option label="区域二" value="beijing"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="活动时间 :">
+      <el-form-item label="活动时间 :ㅤ">
         <el-col :span="7">
           <el-date-picker type="date" placeholder="开始日期" v-model="form.date1" value-format="timestamp" style="width: 100%;"></el-date-picker>
         </el-col>
