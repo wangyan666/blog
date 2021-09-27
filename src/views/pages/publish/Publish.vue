@@ -5,7 +5,7 @@
       <div slot="header" class="clearfix">
         <el-breadcrumb separator-class="el-icon-arrow-right">
           <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-          <el-breadcrumb-item>发布文章</el-breadcrumb-item>
+          <el-breadcrumb-item>{{ $route.query.id ? '修改文章' : '发布文章'}}</el-breadcrumb-item>
         </el-breadcrumb>
       </div>
       <!-- FORM  -->
@@ -14,7 +14,7 @@
         :model="article"
       >
         <el-form-item label="标题 :ㅤ">
-          <el-input v-model="article.title"></el-input>
+          <el-input v-model="article.title" autofocus></el-input>
         </el-form-item>
         <el-form-item label="内容 :ㅤ">
           <el-tiptap
@@ -32,7 +32,7 @@
       </el-form-item>
 
         <el-form-item>
-        <el-button type="primary" @click="onPublish">发表</el-button>
+        <el-button type="primary" @click="onPublish">{{ $route.query.id ? '修改文章' : '发布文章'}}</el-button>
         <el-button type="plain" @click="onDraft">存入草稿</el-button>
       </el-form-item>
       </el-form>
@@ -107,10 +107,47 @@ export default {
 
   methods: {
     onPublish () {
-      request.post('api/blog/draw', { blogData: this.article })
+      if (this.$route.query.id) {
+        request.post('api/blog/update', { blogData: this.article })
+          .then((val) => {
+            this.$message({
+              message: '修改成功',
+              type: 'success'
+            })
+          })
+      } else {
+        request.post('api/blog/draw', { blogData: this.article })
+          .then((val) => {
+            this.$message({
+              message: '发布成功',
+              type: 'success'
+            })
+            this.$router.push('/content')
+          })
+      }
     },
     onDraft () {
 
+    },
+    // 加载修改的文章
+    loadBlog (id) {
+      request.get(`api/blog/detail/${id}`)
+        .then(val => {
+          // console.log(val)
+          this.article = val.data.data[0]
+        })
+    }
+  },
+  // 监视
+  watch: {
+    $route: function () {
+      this.loadBlog(this.$route.query.id)
+    }
+  },
+  created () {
+    if (this.$route.query.id) {
+      // console.log(this.$route.query.id)
+      this.loadBlog(this.$route.query.id)
     }
   }
 }

@@ -73,10 +73,15 @@
           >{{blogState[scope.row.state].text}}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="createtime"
+      <!-- <el-table-column
+        :prop="createtime"
         label="发布时间"
         width="180">
+      </el-table-column> -->
+      <el-table-column label="日期" width="180">
+        <template slot-scope="scope">
+          {{ getLocalTime(scope.row.createtime) }}
+        </template>
       </el-table-column>
       <el-table-column
         label="操作"
@@ -84,11 +89,12 @@
         <template slot-scope="scope">
         <el-button
           size="mini"
-          @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+          @click="$router.push('/publish?id=' + scope.row.id)">编辑</el-button>
         <el-button
           size="mini"
           type="danger"
-          @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+          @click="onDeleteBlog(scope.row.id)"
+          >删除</el-button>
       </template>
       </el-table-column>
     </el-table>
@@ -106,8 +112,8 @@
 </template>
 
 <script>
-import request from '@/utils/request'
-
+import request from '@/utils/request.js'
+import { deleteBlog } from '@/api/blog.js'
 export default {
   name: 'Content',
 
@@ -142,6 +148,7 @@ export default {
   methods: {
     onSubmit () {
       console.log('submit!')
+      this.blogConfig.page = 1
       this.blogConfig.state = this.form.state
       this.blogConfig.date1 = this.form.date1
       this.blogConfig.date2 = this.form.date2
@@ -159,6 +166,7 @@ export default {
         .then((response) => {
           // console.log(response.data)
           this.tableData = response.data.data
+          // console.log(this.tableData)
           this.loading = false
         })
     },
@@ -169,6 +177,49 @@ export default {
           // console.log(val.data.data['COUNT(*)'])
           this.blogNumber = val.data.data['COUNT(*)']
         })
+    },
+    // 删除文章
+    onDeleteBlog (id) {
+      this.$confirm('此操作删除该文章, 请谨慎操作', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteBlog(id).then(val => {
+          this.initBlog(this.blogConfig)
+          this.getTotel()
+        })
+        this.$message({
+          type: 'success',
+          message: '已删除!'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消操作'
+        })
+      })
+    },
+
+    // 时间戳转换
+    // getLocalTime (nS) {
+    //   return new Date(parseInt(nS)).toLocaleString().replace(/:\d{1,2}$/, ' ')
+    // }
+    getLocalTime (value) {
+      const date = new Date(value)
+      const y = date.getFullYear()
+      let m = date.getMonth() + 1
+      let d = date.getDate()
+      let h = date.getHours()
+      let i = date.getMinutes()
+      let s = date.getSeconds()
+      if (m < 10) { m = '0' + m }
+      if (d < 10) { d = '0' + d }
+      if (h < 10) { h = '0' + h }
+      if (i < 10) { i = '0' + i }
+      if (s < 10) { s = '0' + s }
+      const t = y + '-' + m + '-' + d + ' ' + h + ':' + i + ':' + s
+      return t
     }
   },
 
