@@ -1,6 +1,6 @@
 <template>
   <div class="publish-container">
-    <el-card class="box-card top-card">
+    <el-card class="publish-card">
       <!-- 面包屑 -->
       <div slot="header" class="clearfix">
         <el-breadcrumb separator-class="el-icon-arrow-right">
@@ -12,22 +12,28 @@
       <el-form
         label-width="80px"
         :model="article"
+        :rules="rules"
+        ref="publishFormRef"
       >
-        <el-form-item label="标题 :ㅤ">
+        <el-form-item label="标题 :ㅤ" prop="title">
           <el-input v-model="article.title" autofocus></el-input>
         </el-form-item>
-        <el-form-item label="内容 :ㅤ">
+        <el-form-item label="内容 :ㅤ" prop="content">
           <el-tiptap
           v-model="article.content"
           :extensions="extensions"
           lang="zh"
+          :height="320"
           >
           </el-tiptap>
         </el-form-item>
-        <el-form-item label="频道 :ㅤ">
-        <el-select v-model="article.channel" placeholder="请选择频道">
-          <el-option label="区域一" value="shanghai"></el-option>
-          <el-option label="区域二" value="beijing"></el-option>
+        <el-form-item label="分类 :ㅤ" prop="channel">
+        <el-select v-model="article.channel" placeholder="请选择分类">
+          <el-option label="前端" :value="1"></el-option>
+          <el-option label="后端" :value="2"></el-option>
+          <el-option label="算法" :value="3"></el-option>
+          <el-option label="阅读" :value="4"></el-option>
+          <el-option label="其他" :value="5"></el-option>
         </el-select>
       </el-form-item>
 
@@ -79,6 +85,17 @@ export default {
         channel: ''
       },
 
+      // 校验规则
+      rules: {
+        title: [
+          { required: true, message: '请输入标题', trigger: 'change' },
+          { min: 0, max: 40, message: '长度至多40字符', trigger: 'blur' }
+        ],
+        channel: [
+          { required: true, message: '请选择分类', trigger: 'change' }
+        ]
+      },
+      // 富文本编辑器配置
       extensions: [
         new Doc(),
         new Text(),
@@ -107,24 +124,33 @@ export default {
 
   methods: {
     onPublish () {
-      if (this.$route.query.id) {
-        request.post('api/blog/update', { blogData: this.article })
-          .then((val) => {
-            this.$message({
-              message: '修改成功',
-              type: 'success'
+      this.$refs.publishFormRef.validate(valid => {
+        // 验证失败
+        if (!valid) {
+          return
+        }
+
+        // 验证通过提交
+        // 发送请求
+        if (this.$route.query.id) {
+          request.post('api/blog/update', { blogData: this.article })
+            .then((val) => {
+              this.$message({
+                message: '修改成功',
+                type: 'success'
+              })
             })
-          })
-      } else {
-        request.post('api/blog/draw', { blogData: this.article })
-          .then((val) => {
-            this.$message({
-              message: '发布成功',
-              type: 'success'
+        } else {
+          request.post('api/blog/draw', { blogData: this.article })
+            .then((val) => {
+              this.$message({
+                message: '发布成功',
+                type: 'success'
+              })
+              this.$router.push('/content')
             })
-            this.$router.push('/content')
-          })
-      }
+        }
+      })
     },
     onDraft () {
 
@@ -153,5 +179,11 @@ export default {
 }
 </script>
 
-<style>
+<style lang = "less" scoped>
+
+  .publish-card {
+    width: 84%;
+    margin-left: 22px;
+  }
+
 </style>

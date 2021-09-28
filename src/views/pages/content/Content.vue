@@ -21,10 +21,13 @@
           <el-radio label="4">已删除</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="频道 :ㅤ">
-        <el-select v-model="form.channel" placeholder="请选择频道">
-          <el-option label="区域一" value="shanghai"></el-option>
-          <el-option label="区域二" value="beijing"></el-option>
+      <el-form-item label="分类 :ㅤ">
+        <el-select v-model="form.channel" placeholder="请选择分类" clearable>
+          <el-option label="前端" value="1"></el-option>
+          <el-option label="后端" value="2"></el-option>
+          <el-option label="算法" value="3"></el-option>
+          <el-option label="阅读" value="4"></el-option>
+          <el-option label="其他" value="5"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="活动时间 :ㅤ">
@@ -140,7 +143,8 @@ export default {
         pagesize: 6,
         state: null,
         date1: null,
-        date2: null
+        date2: null,
+        channel: null
       },
       blogNumber: 0
     }
@@ -152,6 +156,7 @@ export default {
       this.blogConfig.state = this.form.state
       this.blogConfig.date1 = this.form.date1
       this.blogConfig.date2 = this.form.date2
+      this.blogConfig.channel = this.form.channel
       this.initBlog(this.blogConfig)
       this.getTotel(this.blogConfig)
     },
@@ -243,8 +248,8 @@ export default {
   } */
 
   .box-card {
-    width: 82%;
-    margin-left: 18px;
+    width: 84%;
+    margin-left: 22px;
   }
 
   .top-card{
