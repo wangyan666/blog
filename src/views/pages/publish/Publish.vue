@@ -39,7 +39,7 @@
 
         <el-form-item>
         <el-button type="primary" @click="onPublish">{{ $route.query.id ? '修改文章' : '发布文章'}}</el-button>
-        <el-button type="plain" @click="onDraft">存入草稿</el-button>
+        <el-button type="plain" @click="onDraft" v-show="!$route.query.id">存入草稿</el-button>
       </el-form-item>
       </el-form>
     </el-card>
