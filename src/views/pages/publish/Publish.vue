@@ -82,7 +82,8 @@ export default {
       article: {
         title: '',
         content: '',
-        channel: ''
+        channel: '',
+        state: 1
       },
 
       // 校验规则
@@ -153,7 +154,16 @@ export default {
       })
     },
     onDraft () {
-
+      this.article.state = 0
+      console.log(this.article)
+      request.post('api/blog/draw', { blogData: this.article })
+        .then((val) => {
+          this.$message({
+            message: '存入草稿成功',
+            type: 'success'
+          })
+          this.$router.push('/content')
+        })
     },
     // 加载修改的文章
     loadBlog (id) {

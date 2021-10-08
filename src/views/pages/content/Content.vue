@@ -18,7 +18,7 @@
           <el-radio label="1">待审核</el-radio>
           <el-radio label="2">审核通过</el-radio>
           <el-radio label="3">审核失败</el-radio>
-          <el-radio label="4">已删除</el-radio>
+          <!-- <el-radio label="4">已删除</el-radio> -->
         </el-radio-group>
       </el-form-item>
       <el-form-item label="分类 :ㅤ">
@@ -107,6 +107,7 @@
       :page-size= this.blogConfig.pagesize
       layout="prev, pager, next"
       :total= this.blogNumber
+      :current-page.sync = blogConfig.page
       @current-change="onPageChange">
     </el-pagination>
   </el-card>
@@ -134,8 +135,8 @@ export default {
         { state: 0, text: '草稿', type: 'info' },
         { state: 1, text: '待审核', type: '' },
         { state: 2, text: '审核通过', type: 'success' },
-        { state: 3, text: '审核失败', type: 'warning' },
-        { state: 4, text: '已删除', type: 'danger' }
+        { state: 3, text: '审核失败', type: 'warning' }
+        // { state: 4, text: '已删除', type: 'danger' }
       ],
       // 博客筛选的配置
       blogConfig: {
@@ -191,8 +192,9 @@ export default {
         type: 'warning'
       }).then(() => {
         deleteBlog(id).then(val => {
+          this.getTotel(this.blogConfig)
+          if (this.blogNumber % this.blogConfig.pagesize === 1) this.blogConfig.page = this.blogConfig.page - 1
           this.initBlog(this.blogConfig)
-          this.getTotel()
         })
         this.$message({
           type: 'success',

@@ -10,7 +10,7 @@
               <el-image
                 :key="Date.now()"
                 style="width: 50px; height: 50px; border-radius: 50%"
-                :src="userInfo.avator"
+                :src="userInfo.avatar"
                 :fit="fit">
                 <div slot="error" style="height: 50px;width: 50px;text-align: center;line-height: 50px;font-size:30px;background-color:#dfe6e9" class="image-slot"><i class="el-icon-picture-outline"></i></div>
               </el-image>
@@ -31,8 +31,8 @@
 
 <script>
 
-import request from '@/utils/request'
-
+// import request from '@/utils/request'
+import { getUserInfoRequest } from '@/api/user.js'
 export default {
   name: 'Head',
   data () {
@@ -46,7 +46,7 @@ export default {
   methods: {
     // 登录
     OnLogin () {
-      this.$router.replace({
+      this.$router.push({
         name: 'login'
       })
     },
@@ -83,19 +83,14 @@ export default {
     if (token) {
       this.isLogining = true
       // 验证登录页面用户信息携带的token，从而返回数据
-      request({
-        method: 'get',
-        url: 'api/user/userInfo',
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }).then(res => {
-        // console.log(res.data)
-        this.userInfo = res.data.data
+      getUserInfoRequest()
+        .then(res => {
+          // console.log(res.data.data)
+          this.userInfo = res.data.data
         // console.log(this.userInfo)
-      }).catch(err => {
-        console.log('未获取用户信息', err.message)
-      })
+        }).catch(err => {
+          console.log('未获取用户信息', err.message)
+        })
     }
   }
   // beforeCreate () {
