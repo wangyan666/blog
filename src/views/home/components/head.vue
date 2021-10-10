@@ -33,6 +33,7 @@
 
 // import request from '@/utils/request'
 import { getUserInfoRequest } from '@/api/user.js'
+import $BUS from '@/utils/Bus.js'
 export default {
   name: 'Head',
   data () {
@@ -92,6 +93,11 @@ export default {
           console.log('未获取用户信息', err.message)
         })
     }
+  },
+  mounted () {
+    $BUS.$on('updateProfile', (avatar) => {
+      this.userInfo.avatar = avatar
+    })
   }
   // beforeCreate () {
   //   const token = window.localStorage.getItem('token')

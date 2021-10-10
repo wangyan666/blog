@@ -2,11 +2,10 @@
 import axios from 'axios'
 
 import router from '../router/index.js'
-
+import HOST from '@/conf.js'
 // 创建一个axios实例
 const request = axios.create({
-  // baseURL: 'https://www.fastmock.site/mock/36a9e00e879f5ca13efb754122435c34/myblog'
-  baseURL: 'http://localhost:3000'
+  baseURL: `http://${HOST}:3000`
 })
 
 // 请求拦截器中 统一设置token请求头
@@ -29,6 +28,8 @@ request.interceptors.response.use(
           alert('用户授权过期，请重新登录')
           router.replace('/login')
           break
+        case 500:
+          alert('服务器内部异常，请稍后重试')
       }
     }
   }

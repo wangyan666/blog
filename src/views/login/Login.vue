@@ -63,7 +63,7 @@ export default {
       }).catch(err => {
         console.log('登陆失败了', err)
         this.isLoading = false
-        this.$message.error('登陆失败了')
+        this.$message.error('服务器异常，请稍后重试')
       })
     },
 

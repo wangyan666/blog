@@ -46,7 +46,7 @@
                   </div>
             <span slot="footer" class="dialog-footer">
               <el-button @click="dialogVisible = false">取 消</el-button>
-              <el-button type="primary" @click="onAvatarUpdate">确 定</el-button>
+              <el-button type="primary" @click="onAvatarUpdate" :loading="loading">确 定</el-button>
             </span>
           </el-dialog>
   </div>
@@ -57,6 +57,7 @@ import { getUserInfoRequest, updateUserProfile } from '@/api/user.js'
 import { updateAvatar } from '@/api/setting.js'
 import Cropper from 'cropperjs'
 import 'cropperjs/dist/cropper.css'
+import $BUS from '@/utils/Bus.js'
 
 export default {
   name: 'Setting',
@@ -73,7 +74,8 @@ export default {
       },
       dialogVisible: false,
       previewURL: '',
-      cropper: null
+      cropper: null,
+      loading: false
     }
   },
   methods: {
@@ -121,6 +123,7 @@ export default {
       // this.cropper.destroy()
     },
     onAvatarUpdate () {
+      this.loading = true
       this.cropper.getCroppedCanvas().toBlob(blob => {
         // console.log(blob)
         const fd = new FormData()
@@ -131,6 +134,13 @@ export default {
             this.dialogVisible = false
             // this.userInfo.avatar = val.data  比较慢，需要再发请求
             this.userInfo.avatar = window.URL.createObjectURL(blob)
+            this.loading = false
+            this.$message({
+              message: '头像更新成功',
+              type: 'success'
+            })
+            // 更新顶部 头像
+            $BUS.$emit('updateProfile', this.userInfo.avatar)
           })
       })
     }

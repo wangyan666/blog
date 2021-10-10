@@ -24,14 +24,14 @@
         <i class="iconfont icon-fabu2"></i>
         <span slot="title">发布文章</span>
       </el-menu-item>
-      <el-menu-item index="/comments">
+      <!-- <el-menu-item index="/comments">
         <i class="iconfont icon-tubiaozhizuo-"></i>
         <span slot="title">评论管理</span>
       </el-menu-item>
       <el-menu-item index="/fans">
         <i class="iconfont icon-fensiguanli"></i>
         <span slot="title">粉丝管理</span>
-      </el-menu-item>
+      </el-menu-item> -->
       <el-menu-item index="/setting">
         <i class="iconfont icon-shezhi"></i>
         <span slot="title">个人设置</span>

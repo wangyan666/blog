@@ -36,6 +36,12 @@
           <el-option label="其他" :value="5"></el-option>
         </el-select>
       </el-form-item>
+          <!--封面  -->
+        <el-form-item>
+          <div class="cover-wrapper" @click="onCoverClick">
+            <img :src="article.cover" alt="" ref="cover-ref">
+          </div>
+        </el-form-item>
 
         <el-form-item>
         <el-button type="primary" @click="onPublish">{{ $route.query.id ? '修改文章' : '发布文章'}}</el-button>
@@ -43,10 +49,27 @@
       </el-form-item>
       </el-form>
     </el-card>
+
+ <!--  弹出层  -->
+      <el-dialog
+      :visible.sync="dialogVisible"
+      width="74%"
+      top="4vh"
+      append-to-body
+      >
+      <ImageList :isShowUpload="false" :isShowIcons="false" :isShowPreview="[]" :isShowTick="true" ref="imageList-ref"></ImageList>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="onCoverSure">确 定</el-button>
+      </span>
+    </el-dialog>
+
   </div>
+
 </template>
 
 <script>
+import ImageList from '../material/components/imageList.vue'
 import { uploadImage } from '@/api/upload.js'
 import request from '@/utils/request'
 // 引入富文本编辑器
@@ -75,15 +98,18 @@ import {
 export default {
   name: 'Publish',
   components: {
-    'el-tiptap': ElementTiptap
+    'el-tiptap': ElementTiptap,
+    ImageList
   },
   data () {
     return {
+      dialogVisible: false, // 弹出层控制
       article: {
         title: '',
         content: '',
         channel: '',
-        state: 1
+        state: 1,
+        cover: null
       },
 
       // 校验规则
@@ -154,17 +180,24 @@ export default {
       })
     },
     onDraft () {
-      this.article.state = 0
-      console.log(this.article)
-      request.post('api/blog/draw', { blogData: this.article })
-        .then((val) => {
-          this.$message({
-            message: '存入草稿成功',
-            type: 'success'
+      this.$refs.publishFormRef.validate(valid => {
+      // 验证失败
+        if (!valid) {
+          return
+        }
+        this.article.state = 0
+        // console.log(this.article)
+        request.post('api/blog/draw', { blogData: this.article })
+          .then((val) => {
+            this.$message({
+              message: '存入草稿成功',
+              type: 'success'
+            })
+            this.$router.push('/content')
           })
-          this.$router.push('/content')
-        })
+      })
     },
+
     // 加载修改的文章
     loadBlog (id) {
       request.get(`api/blog/detail/${id}`)
@@ -172,6 +205,26 @@ export default {
           // console.log(val)
           this.article = val.data.data[0]
         })
+    },
+    onCoverClick () {
+      // console.log(1)
+      this.dialogVisible = true
+    },
+    // 选好图片确定按钮事件
+    onCoverSure () {
+      const imageList = this.$refs['imageList-ref']
+      const ticked = imageList.ticked
+      if (ticked === null) {
+        this.$message('请选择图片')
+        return
+      }
+      // console.log(imageList.images[ticked])
+      // 展示图片到框内
+      // this.$refs['cover-ref'].src = imageList.images[ticked].url
+      this.article.cover = imageList.images[ticked].url
+      imageList.ticked = null
+      this.dialogVisible = false
+      //
     }
   },
   // 监视
@@ -190,10 +243,30 @@ export default {
 </script>
 
 <style lang = "less" scoped>
-
+  /* 卡片 */
   .publish-card {
     width: 84%;
     margin-left: 22px;
+  }
+  /* 封面 */
+  .cover-wrapper{
+    height: 160px;
+    width: 160px;
+    /* height: 15px;
+    width: 150px;
+    border: 1px solid black; */
+    /* background-color: beige; */
+    border: 1px solid black;
+    overflow: hidden;
+    img{
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+      vertical-align: top;
+      background-image: url('./none.png');
+      background-size: cover;
+      /* background-size: contain; */
+    }
   }
 
 </style>

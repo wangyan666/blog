@@ -57,9 +57,13 @@
       style="width: 100%"
       >
       <el-table-column
-        prop=""
+        prop="cover"
         label="封面"
         width="180">
+          <template slot-scope="scope">
+            <img v-if="scope.row.cover" :src="scope.row.cover" alt="" class="cover">
+            <img v-else src="./none.png" alt="" class="cover">
+          </template>
       </el-table-column>
       <el-table-column
         prop="title"
@@ -193,7 +197,7 @@ export default {
       }).then(() => {
         deleteBlog(id).then(val => {
           this.getTotel(this.blogConfig)
-          if (this.blogNumber % this.blogConfig.pagesize === 1) this.blogConfig.page = this.blogConfig.page - 1
+          if (this.blogNumber % this.blogConfig.pagesize === 1 && this.blogConfig.page !== 1) this.blogConfig.page = this.blogConfig.page - 1
           this.initBlog(this.blogConfig)
         })
         this.$message({
@@ -260,5 +264,12 @@ export default {
 
   .table{
     margin-bottom: 20px;
+  }
+  /* 文章封面 */
+  .cover{
+     height: 100px;
+      width: 120px;
+      object-fit: cover;
+      vertical-align: top;
   }
 </style>
