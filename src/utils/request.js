@@ -17,7 +17,7 @@ request.interceptors.request.use(
   }
 )
 
-// 相应拦截器，返回401时，重新登录
+// 响应拦截器，返回401时，重新登录
 request.interceptors.response.use(
   response => { return response },
   error => {

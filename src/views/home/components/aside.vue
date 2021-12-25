@@ -14,7 +14,7 @@
       </el-menu-item>
       <el-menu-item index="/content">
         <i class="iconfont icon-neirongguanli1"></i>
-        <span slot="title">内容管理</span>
+        <span slot="title">博客管理</span>
       </el-menu-item>
       <el-menu-item index="/material">
         <i class="iconfont icon-sucai"></i>
@@ -22,7 +22,7 @@
       </el-menu-item>
       <el-menu-item index="/publish">
         <i class="iconfont icon-fabu2"></i>
-        <span slot="title">发布文章</span>
+        <span slot="title">开始创作</span>
       </el-menu-item>
       <!-- <el-menu-item index="/comments">
         <i class="iconfont icon-tubiaozhizuo-"></i>

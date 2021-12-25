@@ -6,7 +6,7 @@
     <div slot="header" class="clearfix">
       <el-breadcrumb separator-class="el-icon-arrow-right">
         <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-        <el-breadcrumb-item>内容管理</el-breadcrumb-item>
+        <el-breadcrumb-item>博客管理</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
     <!-- 筛选 -->
@@ -188,9 +188,9 @@ export default {
           this.blogNumber = val.data.data['COUNT(*)']
         })
     },
-    // 删除文章
+    // 删除博客
     onDeleteBlog (id) {
-      this.$confirm('此操作删除该文章, 请谨慎操作', '提示', {
+      this.$confirm('此操作删除该博客, 请谨慎操作', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
