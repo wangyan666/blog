@@ -1,129 +1,131 @@
 <template>
-  <div  class="head">
-            <div class="head-left">
-              <i class="el-icon-star-off"></i>
-              <span>博客Blogs</span>
-            </div>
+  <div class="login-container">
+    <el-form ref="formRef" class="login-form" :model="user" :rules="rules">
+      <el-form-item class="item" prop="username">
+        <el-input class="input" v-model="user.username" placeholder="请输入账号"></el-input>
+      </el-form-item>
+      <el-form-item class="item" prop="password">
+        <el-input class="input" type="password" v-model="user.password" placeholder="请输入密码" ></el-input>
+      </el-form-item>
 
-            <el-dropdown v-if="isLogining">
-            <div class="el-dropdown-link">
-              <el-image
-                :key="Date.now()"
-                style="width: 50px; height: 50px; border-radius: 50%"
-                :src="userInfo.avatar"
-                :fit="fit">
-                <div slot="error" style="height: 50px;width: 50px;text-align: center;line-height: 50px;font-size:30px;background-color:#dfe6e9" class="image-slot"><i class="el-icon-picture-outline"></i></div>
-              </el-image>
-              <!-- <img :src="userInfo.avator" alt="" style="width: 50px; height: 50px; border-radius: 50%"> -->
-              <i class="el-icon-arrow-down el-icon--right"></i>
-            </div>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="goPage('http://www.baidu.com')">百度一下</el-dropdown-item>
-              <el-dropdown-item @click.native="goPage('https://www.google.com/ncr')">Google</el-dropdown-item>
-              <el-dropdown-item @click.native="goPage('https://github.com/wangyan666')">个人中心</el-dropdown-item>
-              <el-dropdown-item divided @click.native="onOutLogin">退出登录</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-          <!-- 未登录时的右侧导航 -->
-          <el-button plain v-if="!isLogining" @click="OnLogin">登&nbsp;&nbsp;录</el-button>
-    </div>
+      <el-form-item class="item">
+        <el-button class="button" type="primary" @click="onsubmit('formRef')" :loading="isLoading">登录</el-button>
+      </el-form-item>
+    </el-form>
+  </div>
 </template>
 
-<script>
+<script >
 
-// import request from '@/utils/request'
-import { getUserInfoRequest } from '@/api/user.js'
-import $BUS from '@/utils/Bus.js'
+import request from '@/utils/request'
+
 export default {
-  name: 'Head',
+  name: 'Login',
+
   data () {
     return {
-      isLogining: false,
-      fit: 'cover',
-      userInfo: {},
-      dialogVisible: false // 消息提示
+      user: {
+        username: '',
+        password: ''
+      },
+      isLoading: false,
+      rules: {
+        username: [
+          { required: true, message: '请输入账号', trigger: 'blur' },
+          { min: 3, max: 8, message: '长度在 3 到 8 个字符', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入活动名称', trigger: 'blur' },
+          { min: 3, max: 8, message: '长度在 3 到 8 个字符', trigger: 'blur' }
+        ]
+      }
     }
   },
+
   methods: {
-    // 登录
-    OnLogin () {
-      this.$router.push({
-        name: 'login'
+    onLogin () {
+      this.isLoading = true
+
+      // request为封装的axios
+      request({
+        method: 'post',
+        url: '/api/user/login',
+        data: this.user
+      }).then(res => {
+        this.isLoading = false
+        if (res.data.data.token) {
+          this.$message.success('登陆成功')
+          window.localStorage.setItem('token', res.data.data.token)
+          this.$router.replace({
+            name: 'first'
+          })
+        } else this.$message.error('登陆失败')
+      }).catch(err => {
+        console.log('登陆失败了', err)
+        this.isLoading = false
+        this.$message.error('服务器异常，请稍后重试')
       })
-    },
-    // 去外部链接
-    goPage (url) {
-      window.location.href = url
     },
 
-    // 退出登录
-    onOutLogin () {
-      this.$confirm('此操作将退出该账号, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        window.localStorage.removeItem('token')
-        location.reload() // 刷新页面
-        this.isLogining = false
-        // this.$route.push('/')
-        this.$message({
-          type: 'success',
-          message: '已退出!'
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消操作'
-        })
+    onsubmit (formRef) {
+      this.$refs[formRef].validate((valid) => {
+        if (valid) {
+          this.onLogin()
+        } else {
+          console.log('error submit!!')
+          return false
+        }
       })
     }
-  },
-  created () {
-    const token = window.localStorage.getItem('token')
-    if (token) {
-      this.isLogining = true
-      // 验证登录页面用户信息携带的token，从而返回数据
-      getUserInfoRequest()
-        .then(res => {
-          // console.log(res.data.data)
-          this.userInfo = res.data.data
-        // console.log(this.userInfo)
-        }).catch(err => {
-          console.log('未获取用户信息', err.message)
-        })
-    }
-  },
-  mounted () {
-    $BUS.$on('updateProfile', (avatar) => {
-      this.userInfo.avatar = avatar
-    })
   }
-  // beforeCreate () {
-  //   const token = window.localStorage.getItem('token')
-  //   if (token) {
-  //   }
-  // }
 }
 </script>
 
-<style lang="less" scoped>
-  /* 设置字体样式 */
-  .head-left{
-    font-size: 18px;
-  }
-  .head{
-    height: 100%;
+<style lang = "less">
+  .login-container{
     display: flex;
-    justify-content: space-between;
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    justify-content: center;
     align-items: center;
-  }
-  .el-dropdown-link {
-    cursor: pointer;
-    color: #000;
-  }
-  .el-icon-arrow-down {
-    font-size: 12px;
-  }
+    background: url('./back.jpg');
+    background-size: cover;
 
+    .login-form{
+      border-radius: 5px;
+      background-color: #e0e0e0;
+      /* margin-bottom: 100px; */
+      width: 380px;
+      height: 270px;
+      padding:50px;
+      box-sizing: border-box;
+
+      .el-input__inner{
+      line-height: 1.5;
+      }
+
+      .button{
+        margin-top: 14px;
+        font-size: 17px;
+        font-weight: bold;
+        width: 100%;
+        border: none;
+        color: black;
+        border-radius: 14px;
+        background: #e0e0e0;
+        box-shadow:  10px 10px 20px #bababa,
+             -10px -10px 20px #ffffff;
+        transition: all 0.2s ease-out;
+        &:hover {
+          font-size: 16px;
+          box-shadow: 0 0 0 rgba(0,0,0,0.2), 0 0 0 rgba(255, 255, 255, 0.8),
+          inset 10px 10px 20px rgba(0,0,0,0.1),inset
+             -10px -10px 20px rgba(255,255,255,1);
+        }
+      }
+    }
+  }
 </style>
