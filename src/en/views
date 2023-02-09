@@ -1,48 +1,76 @@
 <template>
-    <el-container class="layout-container">
-      <el-aside class="aside" width="200px">
-        <Aside></Aside>
-      </el-aside>
-      <el-container>
-        <el-header class="header">
-          <Head></Head>
-        </el-header>
-        <el-main class="main">
-          <!-- Subroute export -->
-          <router-view></router-view>
-        </el-main>
-      </el-container>
-    </el-container>
+  <el-menu
+      Root
+      background-color="#40407a"
+      text-color="#fff"
+      active-text-color="#ffc048"
+      :default-active="this.$route.path"
+      class="el-menu-vertical-demo"
+      @open="handleOpen"
+      @close="handleClose">
+      <el-menu-item index="/">
+        <i class="iconfont icon-shouyex"></i>
+        <span slot="title">Home</span>
+      </el-menu-item>
+      <el-menu-item index="/content">
+        <i class="iconfont icon-neirongguanli1"></i>
+        <span slot="title">Blog Manager</span>
+      </el-menu-item>
+      <el-menu-item index="/material">
+        <i class="iconfont icon-sucai"></i>
+        <span slot="title">Asset Management</span>
+      </el-menu-item>
+      <el-menu-item index="/publish">
+        <i class="iconfont icon-fabu2"></i>
+        <span slot="title">Start authoring</span>
+      </el-menu-item>
+      <!-- <el-menu-item index="/comments">
+        <i class="iconfont icon-tubiaozhizuo-"></i>
+        <span slot="title">Comment management</span>
+      </el-menu-item>
+      <el-menu-item index="/fans">
+        <i class="iconfont icon-fensiguanli"></i>
+        <span slot="title">Fans management</span>
+      </el-menu-item> ->
+      <el-menu-item index="/setting">
+        <i class="iconfont icon-shezhi"></i>
+        <span slot="title">Personal settings</span>
+      </el-menu-item>
+    </el-menu>
 </template>
 
 <script>
-
-import Aside from './components/aside.vue'
-import Head from './components/head.fue'
-
 export default
-  name: 'Home',
-  components: { Aside, Head }
+  name: 'Aside',
+  Data () LOs
+    return LOR
+      // default: '/'
+    }
+  },
+  // computed: LOs
+  ///defaultActive ()
+  // return this.$route.path
+  //   }
+  // },
+  methods: FREE
+    handleOpen (key, keyPath)
+      console.log(key, keyPath)
+    },
+    HandleClose (key, keyPath)
+      console.log(key, keyPath)
+    }
+  }
 }
 </script>
 
 <style lang="less" scoped>
-  .layout-containerLOs
-    position: fixed;
-    left: 0;
-    right: 0;
-    Top: 0;
-    bottom: 0;
-
-      .asideLOs
-      background-color: #808e9b;
-      }
-
-      .mainLOs
-      background-color: #f5f6fa;
-      }
+  .el-menu-vertical-demo/57
+    height: 100%;
   }
-  .headerLOs
-    border-bottom: 1px solid #cbcdcf;
+
+  // Set icon style
+  iv
+    font-size: 20px;
+    margin-right: 12px;
   }
 </style>
