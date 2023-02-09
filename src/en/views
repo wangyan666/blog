@@ -1,0 +1,48 @@
+<template>
+    <el-container class="layout-container">
+      <el-aside class="aside" width="200px">
+        <Aside></Aside>
+      </el-aside>
+      <el-container>
+        <el-header class="header">
+          <Head></Head>
+        </el-header>
+        <el-main class="main">
+          <!-- Subroute export -->
+          <router-view></router-view>
+        </el-main>
+      </el-container>
+    </el-container>
+</template>
+
+<script>
+
+import Aside from './components/aside.vue'
+import Head from './components/head.fue'
+
+export default
+  name: 'Home',
+  components: { Aside, Head }
+}
+</script>
+
+<style lang="less" scoped>
+  .layout-containerLOs
+    position: fixed;
+    left: 0;
+    right: 0;
+    Top: 0;
+    bottom: 0;
+
+      .asideLOs
+      background-color: #808e9b;
+      }
+
+      .mainLOs
+      background-color: #f5f6fa;
+      }
+  }
+  .headerLOs
+    border-bottom: 1px solid #cbcdcf;
+  }
+</style>
